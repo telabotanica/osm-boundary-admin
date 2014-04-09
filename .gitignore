@@ -1,1 +1,5 @@
 /config.cfg
+/bin/*
+/osm/*
+/utils/*
+/logs/*
