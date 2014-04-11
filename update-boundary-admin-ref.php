@@ -10,11 +10,11 @@
  * La date de dernière apparition dans la table multipolygons est indiquée.
  *
  *
- * @category	php 5.3
- * @author		Jean-Pascal MILCENT <jpm@tela-botanica.org>
- * @copyright	Copyright (c) 2014, Tela Botanica (accueil@tela-botanica.org)
- * @license		CeCILL v2 <http://www.cecill.info/licences/Licence_CeCILL_V2-fr.txt>
- * @license		GNU GPL <http://www.gnu.org/licenses/gpl.html>
+ * @category   php 5.3
+ * @author     Jean-Pascal MILCENT <jpm@tela-botanica.org>
+ * @copyright  Copyright (c) 2014, Tela Botanica (accueil@tela-botanica.org)
+ * @license    CeCILL v2 <http://www.cecill.info/licences/Licence_CeCILL_V2-fr.txt>
+ * @license    GNU GPL <http://www.gnu.org/licenses/gpl.html>
  */
 define('DS', DIRECTORY_SEPARATOR);
 $config = parse_ini_file(__DIR__.DS.'config.cfg');
