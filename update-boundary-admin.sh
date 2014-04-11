@@ -30,7 +30,7 @@ else
 	exit;
 fi
 
-# Check osm-c-tolls needed
+# Check if the osm-c tools are needed
 cd $DIR_BIN
 if [ ! -f ${DIR_BIN}/osmupdate ] ; then
 	wget -O - http://m.m.i24.cc/osmupdate.c | cc -x c - -o osmupdate
@@ -43,7 +43,7 @@ if [ ! -f ${DIR_BIN}/osmfilter ] ; then
 fi
 cd $DIR_BASE
 
-# Check ogr2ogr needed
+# Check if the ogr2ogr was built with support of Mysql and OSM
 if [ ! -f ${DIR_BIN_OGR}/ogr2ogr ] &&	 [ ! -f ${DIR_BIN_OGR}/ogrinfo ] ; then
 	echo "Please build a Gdal version with MySQL and OSM support."
 else
@@ -54,27 +54,28 @@ else
 	fi
 fi
 
-# Check osm file first update
+# Maintain up to date the .osm.pbf file
 if [ ! -f "${DIR_OSM}/france.osm.pbf" ] ; then
 	echo "Téléchargement du fichier PBF initial...";
 	wget http://download.geofabrik.de/europe/france-latest.osm.pbf -O "${DIR_OSM}/france.osm.pbf"
 else
-	if [ `ageEnSeconde "${DIR_OSM}/france.osm.pbf"` -gt 86000 ] ; then
+	# Check if an update has been made less than 8 hours
+	if [ `ageEnSeconde "${DIR_OSM}/france.osm.pbf"` -gt 28800 ] ; then
 		echo "Mise à jour du fichier PBF...";
 		mv ${DIR_OSM}/france.osm.pbf ${DIR_OSM}/france_old.osm.pbf
-		${DIR_BIN}/osmupdate -t=${DIR_TMP}/osmupdate/temp --day ${DIR_OSM}/france_old.osm.pbf ${DIR_OSM}/france.osm.pbf
+		${DIR_BIN}/osmupdate -B=${DIR_POLY}/france.poly -v -t=${DIR_TMP}/osmupdate/temp --day ${DIR_OSM}/france_old.osm.pbf ${DIR_OSM}/france.osm.pbf
 		rm -f ${DIR_OSM}/france_old.osm.pbf
 	else
 		echo "france.osm.pbf up to date";
 	fi
 fi
 
+# Create boundary extract
 if [ ! -f "${DIR_OSM}/france.osm.pbf" ] ; then
 	echo "Impossible de trouver france.osm.pbf.";
 	exit 1;
 else
-	# Create boundary extract
-	if [ `ageEnSeconde "${DIR_OSM}/france_boundary.osm.pbf"` -gt 86000 ] ; then
+	if [ ! -f "${DIR_OSM}/france_boundary.osm.pbf" ] || [ `ageEnSeconde "${DIR_OSM}/france_boundary.osm.pbf"` -gt 28800 ] ; then
 		echo "Filtrage des zones administratives en cours..."
 		${DIR_BIN}/osmconvert ${DIR_OSM}/france.osm.pbf --out-o5m > ${DIR_OSM}/france.o5m
 		${DIR_BIN}/osmfilter -t=${DIR_TMP}/osmfilter_tempfile \
@@ -90,6 +91,7 @@ else
 	fi
 fi
 
+# Import into Mysql
 if [ ! -f "${DIR_OSM}/france_boundary.osm.pbf" ] ; then
 	echo "Impossible de trouver france_boundary.osm.pbf.";
 	exit 1;
