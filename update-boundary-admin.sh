@@ -113,7 +113,6 @@ do
 		${DIR_BIN_OGR}/ogr2ogr \
 			--config OSM_CONFIG_FILE $OSM_CONF_INI \
 			--config MYSQL_UNIX_PORT $MYSQL_UNIX_PORT \
-			--config OGR_INTERLEAVED_READING YES
 			-overwrite \
 			-progress \
 			-f "MySQL" MYSQL:${MYSQL_DATABASE},user=${MYSQL_USER},password=${MYSQL_PASSWORD},host=${MYSQL_HOST},port=${MYSQL_PORT} \

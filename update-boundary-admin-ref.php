@@ -63,16 +63,18 @@ $query = "INSERT INTO multipolygons_ref ($fieldsToInsert, date_add, date_update,
 	'FROM multipolygons AS m '.
 	'WHERE m.osm_id IS NOT NULL '.
 	"AND m.osm_id NOT IN (SELECT osm_id FROM multipolygons_ref WHERE zone = '$zone' ) ";
-$rowsAddedNumber = $db->exec($query);
-echo "Nombre de multi-polygones ajoutés : $rowsAddedNumber\n";
+$rowsAddedInfos = executeQuery($db, $query);
+$rowsAddedTpl = "Nombre de multi-polygones ajoutés : %s - Time elapsed : %s\n";
+echo sprintf($rowsAddedTpl, $rowsAddedInfos['number'], $rowsAddedInfos['time']);
 
 // Multipolygons vanished
 $query = 'UPDATE multipolygons_ref '.
 	'SET date_vanish = NOW() '.
 	"WHERE zone = '$zone' ".
 	'AND osm_id NOT IN (SELECT osm_id FROM multipolygons WHERE osm_id IS NOT NULL ) ';
-$rowsVanishedNumber = $db->exec($query);
-echo "Nombre de multi-polygones ayant disparu : $rowsVanishedNumber\n";
+$rowsVanishedInfos = executeQuery($db, $query);
+$rowsVanishedTpl = "Nombre de multi-polygones ayant disparu : %s - Time elapsed : %s\n";
+echo sprintf($rowsVanishedTpl, $rowsVanishedInfos['number'], $rowsVanishedInfos['time']);
 
 // Multipolygons updated
 $fieldsToUpdate = array();
@@ -87,16 +89,18 @@ $query = 'UPDATE multipolygons_ref AS mr '.
 	"WHERE zone = '$zone' ".
 	'AND mr.osm_version < m.osm_version '.
 	'AND m.osm_id IS NOT NULL ';
-$rowsUpdatedNumber = $db->exec($query);
-echo "Nombre de multi-polygones modifiés : $rowsUpdatedNumber\n";
+$rowsUpdatedInfos = executeQuery($db, $query);
+$rowsUpdatedTpl = "Nombre de multi-polygones modifiés : %s - Time elapsed : %s\n";
+echo sprintf($rowsUpdatedTpl, $rowsUpdatedInfos['number'], $rowsUpdatedInfos['time']);
 
 # Multipolygons centroid update
 $query = 'UPDATE multipolygons_ref '.
 	'SET shape_centroid = CENTROID(shape) '.
 	'WHERE shape IS NOT NULL '.
 	'AND (date_add > (NOW() - INTERVAL 8 HOUR) OR date_update > (NOW() - INTERVAL 8 HOUR) ) ';
-$centroidUpdatedNumber = $db->exec($query);
-echo "Nombre de centroïdes mis à jour : $centroidUpdatedNumber\n";
+$centroidUpdatedInfos = executeQuery($db, $query);
+$centroidUpdatedTpl = "Nombre de centroïdes mis à jour : %s - Time elapsed : %s\n";
+echo sprintf($centroidUpdatedTpl, $centroidUpdatedInfos['number'], $centroidUpdatedInfos['time']);
 
 //+----------------------------------------------------------------------------------------------------------+
 // FUNCTIONS
@@ -140,4 +144,11 @@ function createMultiPolygonsRefTable($fields) {
 	  KEY osm_id (osm_id)
 	) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
 	return $query;
+}
+
+function executeQuery($db, $query) {
+	$start = microtime(true);
+	$number = $db->exec($query);
+	$time = microtime(true) - $start;
+	return array('number' => $number, 'time' => gmdate('H:i:s', round($time * 1000, 3)));
 }
