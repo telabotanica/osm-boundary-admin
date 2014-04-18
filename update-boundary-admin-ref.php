@@ -1,14 +1,13 @@
 <?php
 // declare(encoding='UTF-8');
 /**
- * Maintient une table de référence des contours de zones administrative issues d'OSM.
+ * Maintains a reference table of administrative areas extracted from OpenStreetMap.
  *
- * Le driver OSM pour Gdal, ne supporte pas les polygones incomplets.
- * Lorsqu'il trouve un tel polygone, il n'apparait pas dans la table multipolygons.
+ * OSM driver for GDAL does not support incomplete polygons.
+ * When it finds such a polygon, it does not appear in the table multipolygons.
  *
- * Pour palier à ce problème, ce script maintient à jour une table de référence des multipolygons "multipolygons_ref".
- * La date de dernière apparition dans la table multipolygons est indiquée.
- *
+ * To overcome this problem, this script maintains a reference table of multipolygons : "multipolygons_ref".
+ * Date of last appearance in the multipolygons table is indicated.
  *
  * @category   php 5.3
  * @author     Jean-Pascal MILCENT <jpm@tela-botanica.org>
@@ -39,7 +38,7 @@ try {
 	$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 }
 catch(PDOException $e) {
-	$msg = 'ERREUR PDO dans ' . $e->getFile() . ' L.' . $e->getLine() . ' : ' . $e->getMessage();
+	$msg = 'ERREUR PDO in ' . $e->getFile() . ' L.' . $e->getLine() . ' : ' . $e->getMessage();
 	die($msg);
 }
 // Update the database structure
@@ -47,7 +46,7 @@ foreach ($queriesInit as $query) {
 	try {
 		$db->exec($query);
 	} catch(PDOException $e) {
-		$msg = 'ERREUR PDO dans ' . $e->getFile() . ' L.' . $e->getLine() . ' : ' . $e->getMessage();
+		$msg = 'ERREUR PDO in ' . $e->getFile() . ' L.' . $e->getLine() . ' : ' . $e->getMessage();
 		echo "$msg\n";
 	}
 }
@@ -62,7 +61,7 @@ $query = "INSERT INTO multipolygons_ref ($fieldsToInsert, date_add, date_update,
 	"AND m.osm_id NOT IN (SELECT osm_id FROM multipolygons_ref WHERE zone = '$zone' ) ";
 
 $rowsAddedInfos = executeQuery($db, $query);
-$rowsAddedTpl = "Nombre de multi-polygones ajoutés : %s - Time elapsed : %s\n";
+$rowsAddedTpl = "Multipolygons added : %s - Time elapsed : %s\n";
 echo sprintf($rowsAddedTpl, $rowsAddedInfos['number'], $rowsAddedInfos['time']);
 
 // Multipolygons vanished
@@ -71,7 +70,7 @@ $query = 'UPDATE multipolygons_ref '.
 	"WHERE zone = '$zone' ".
 	'AND osm_id NOT IN (SELECT osm_id FROM multipolygons WHERE osm_id IS NOT NULL AND osm_way_id IS NULL ) ';
 $rowsVanishedInfos = executeQuery($db, $query);
-$rowsVanishedTpl = "Nombre de multi-polygones ayant disparu : %s - Time elapsed : %s\n";
+$rowsVanishedTpl = "Multipolygons vanished : %s - Time elapsed : %s\n";
 echo sprintf($rowsVanishedTpl, $rowsVanishedInfos['number'], $rowsVanishedInfos['time']);
 
 // Multipolygons updated
@@ -89,7 +88,7 @@ $query = 'UPDATE multipolygons_ref AS mr '.
 	'AND m.osm_id IS NOT NULL '.
 	'AND m.osm_way_id IS NULL ';
 $rowsUpdatedInfos = executeQuery($db, $query);
-$rowsUpdatedTpl = "Nombre de multi-polygones modifiés : %s - Time elapsed : %s\n";
+$rowsUpdatedTpl = "Multipolygons updated : %s - Time elapsed : %s\n";
 echo sprintf($rowsUpdatedTpl, $rowsUpdatedInfos['number'], $rowsUpdatedInfos['time']);
 
 # Multipolygons centroid update
@@ -98,7 +97,7 @@ $query = 'UPDATE multipolygons_ref '.
 	'WHERE shape IS NOT NULL '.
 	'AND (date_add > (NOW() - INTERVAL 8 HOUR) OR date_update > (NOW() - INTERVAL 8 HOUR) ) ';
 $centroidUpdatedInfos = executeQuery($db, $query);
-$centroidUpdatedTpl = "Nombre de centroïdes mis à jour : %s - Time elapsed : %s\n";
+$centroidUpdatedTpl = "Multipolygon's centroïds updated : %s - Time elapsed : %s\n";
 echo sprintf($centroidUpdatedTpl, $centroidUpdatedInfos['number'], $centroidUpdatedInfos['time']);
 
 //+----------------------------------------------------------------------------------------------------------+
