@@ -27,14 +27,9 @@ $fieldsNames = array_keys($fields);
 
 // Create queries
 $queriesInit[] = createMultiPolygonsRefTable($fields);
-$queriesInit[] = "ALTER TABLE multipolygons_ref ADD INDEX osm_version ( osm_version ) ;";
-$queriesInit[] = "ALTER TABLE multipolygons_ref ADD INDEX date_add ( date_add ) ;";
-$queriesInit[] = "ALTER TABLE multipolygons_ref ADD INDEX date_update ( date_update ) ;";
-$queriesInit[] = "ALTER TABLE multipolygons_ref ADD INDEX date_vanish ( date_vanish ) ;";
-$queriesInit[] = "ALTER TABLE multipolygons_ref ADD INDEX zone ( zone ) ;";
-$queriesInit[] = "ALTER TABLE multipolygons CHANGE osm_id osm_id BIGINT NULL DEFAULT NULL ;";
+$queriesInit[] = "ALTER TABLE multipolygons CHANGE osm_id osm_id BIGINT NOT NULL ;";
 $queriesInit[] = "ALTER TABLE multipolygons ADD INDEX osm_id ( osm_id ) COMMENT '';";
-$queriesInit[] = "ALTER TABLE multipolygons ADD INDEX version ( version ) COMMENT '';";
+$queriesInit[] = "ALTER TABLE multipolygons ADD INDEX osm_version ( osm_version ) COMMENT '';";
 
 // Initialize the database connection
 try {
@@ -48,12 +43,13 @@ catch(PDOException $e) {
 	die($msg);
 }
 // Update the database structure
-try {
-	foreach ($queriesInit as $query) {
+foreach ($queriesInit as $query) {
+	try {
 		$db->exec($query);
+	} catch(PDOException $e) {
+		$msg = 'ERREUR PDO dans ' . $e->getFile() . ' L.' . $e->getLine() . ' : ' . $e->getMessage();
+		echo "$msg\n";
 	}
-} catch(PDOException $e) {
-	$msg = 'ERREUR PDO dans ' . $e->getFile() . ' L.' . $e->getLine() . ' : ' . $e->getMessage();
 }
 
 // Multipolygons added
@@ -62,7 +58,9 @@ $query = "INSERT INTO multipolygons_ref ($fieldsToInsert, date_add, date_update,
 	"SELECT $fieldsToInsert, NOW(), NULL, NULL, '$zone' ".
 	'FROM multipolygons AS m '.
 	'WHERE m.osm_id IS NOT NULL '.
+	"AND m.osm_way_id IS NULL ".
 	"AND m.osm_id NOT IN (SELECT osm_id FROM multipolygons_ref WHERE zone = '$zone' ) ";
+
 $rowsAddedInfos = executeQuery($db, $query);
 $rowsAddedTpl = "Nombre de multi-polygones ajoutés : %s - Time elapsed : %s\n";
 echo sprintf($rowsAddedTpl, $rowsAddedInfos['number'], $rowsAddedInfos['time']);
@@ -71,7 +69,7 @@ echo sprintf($rowsAddedTpl, $rowsAddedInfos['number'], $rowsAddedInfos['time']);
 $query = 'UPDATE multipolygons_ref '.
 	'SET date_vanish = NOW() '.
 	"WHERE zone = '$zone' ".
-	'AND osm_id NOT IN (SELECT osm_id FROM multipolygons WHERE osm_id IS NOT NULL ) ';
+	'AND osm_id NOT IN (SELECT osm_id FROM multipolygons WHERE osm_id IS NOT NULL AND osm_way_id IS NULL ) ';
 $rowsVanishedInfos = executeQuery($db, $query);
 $rowsVanishedTpl = "Nombre de multi-polygones ayant disparu : %s - Time elapsed : %s\n";
 echo sprintf($rowsVanishedTpl, $rowsVanishedInfos['number'], $rowsVanishedInfos['time']);
@@ -88,7 +86,8 @@ $query = 'UPDATE multipolygons_ref AS mr '.
 	'	date_update = NOW() '.
 	"WHERE zone = '$zone' ".
 	'AND mr.osm_version < m.osm_version '.
-	'AND m.osm_id IS NOT NULL ';
+	'AND m.osm_id IS NOT NULL '.
+	'AND m.osm_way_id IS NULL ';
 $rowsUpdatedInfos = executeQuery($db, $query);
 $rowsUpdatedTpl = "Nombre de multi-polygones modifiés : %s - Time elapsed : %s\n";
 echo sprintf($rowsUpdatedTpl, $rowsUpdatedInfos['number'], $rowsUpdatedInfos['time']);
@@ -133,16 +132,21 @@ function createMultiPolygonsRefTable($fields) {
 		$fieldsInfos .= "\t  ".$fieldName.' '.$fieldFormat.",\n";
 	}
 	$query = "CREATE TABLE IF NOT EXISTS multipolygons_ref (
-	  id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-	  shape_centroid point DEFAULT NULL,
-	  $fieldsInfos
-	  date_add DATETIME,
-	  date_update DATETIME,
-	  date_vanish DATETIME,
-	  zone varchar(50),
-	  UNIQUE KEY id (id),
-	  KEY osm_id (osm_id)
-	) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+		id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+		shape_centroid point DEFAULT NULL,
+		$fieldsInfos
+		date_add DATETIME,
+		date_update DATETIME,
+		date_vanish DATETIME,
+		zone varchar(50),
+		UNIQUE KEY id (id),
+		KEY osm_id (osm_id),
+		KEY osm_version (osm_version),
+		KEY date_add (date_add),
+		KEY date_update (date_update),
+		KEY date_vanish (date_vanish),
+		KEY zone (zone)
+		) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
 	return $query;
 }
 
@@ -150,5 +154,5 @@ function executeQuery($db, $query) {
 	$start = microtime(true);
 	$number = $db->exec($query);
 	$time = microtime(true) - $start;
-	return array('number' => $number, 'time' => gmdate('H:i:s', round($time * 1000, 3)));
+	return array('number' => $number, 'time' => gmdate('H:i:s', $time));
 }
