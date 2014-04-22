@@ -29,18 +29,18 @@ Il s'assure aussi du lancement du script "update-boundary-admin-ref.php".
 
 ## Installation
 Assurez vous d'avoir au moins 50 Go d'espace disque, la duplication de certains fichiers peut consommer une
-quantité non négligeable d'espace disque de façon temporaire.
+quantité non négligeable d'espace disque de façon temporaire.  
 Pour être à l'aise et anticiper l'augmentation en taille des fichiers, prévoir 100Go d'espace disque.
 
-Vous pouvez cloner le dépôt Git :
+Vous pouvez cloner le dépôt Git :  
 `git clone https://github.com/telabotanica/osm-boundary-admin.git`
-Si vous ne disposez pas de Git, vous pouvez télécharger une archive zip :
+Si vous ne disposez pas de Git, vous pouvez télécharger une archive zip :  
 https://github.com/telabotanica/osm-boundary-admin/archive/master.zip
 
 Vérifiez que vous disposez bien des bonnes version de Gdal, Mysql et PHP.
 
 Si Gdal, n'a pas le support de Mysql et OSM, vous pouvez utiliser un des scripts présents dans le dossier "utils"
-pour le compiler.
+pour le compiler.  
 Pour ce faire :
  - copier/coller le fichier _config.defaut.cfg_ et renomer le _config.cfg_
  - ajuster les variables : MYSQL_CONFIG, GDAL_VERSION, GDAL_URL_DOWNLOAD, GDAL_BUILD_DIR, GDAL_INSTALL_DIR
@@ -63,9 +63,9 @@ Vous pouvez automatiser le lancement de script via un cron, pour cela :
  - ajouter une entrée pour le lancement du script, par exemple :
 ` 0 3 * * * /home/username/bin/update-boundary-admin.sh 2>/dev/null > $FILE_LOG`
 
-Vous pouvez aussi utiliser les scripts _osm-service.sh_ et _osm-cron.sh_ présents dans le dossier _utils/_.
-Ils permettent de lancer le script avec les droits d'un utilisateur donné même si celui ci n'a pas d'accès à un shell.
-Le script _osm-service.sh_ est un service qui permet de lancer le script servant de cron _osm-cron.sh_.
+Vous pouvez aussi utiliser les scripts _osm-service.sh_ et _osm-cron.sh_ présents dans le dossier _utils/_.  
+Ils permettent de lancer le script avec les droits d'un utilisateur donné même si celui ci n'a pas d'accès à un shell.  
+Le script _osm-service.sh_ est un service qui permet de lancer le script servant de cron _osm-cron.sh_.  
 Pour les utiliser :
  - copier le fichier _osm-cron.sh_ dans _/usr/local/sbin_
  - modifier le contenu du fichier
@@ -80,5 +80,5 @@ Pour les utiliser :
  - pour connaître le statut du service : `service osm-service.sh status`
 
 ## Visualiser les fichiers de logs
-Les fichiers de log contiennent les informations pour la coloration syntaxique des lignes.
+Les fichiers de log contiennent les informations pour la coloration syntaxique des lignes.  
 Pour visualiser leur contenu en couleur, vous pouvez utiliser la commande : `cat mon_fichier.log | more`
