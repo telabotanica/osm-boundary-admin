@@ -4,7 +4,7 @@ osm-boundary-admin
 ## But
 Le but de ce script shell est d'extraire les contours des zones administratives provenant du projet OpenStreetMap.
 Ceci afin de les intégrer dans une base Mysql 5.6 où une table de référence stocke les polygones correspondant
-et indique les dates d'ajout, de modification et de disparition.
+et indique les dates d'ajout, de modification et de disparition.  
 Le script maintient donc à jour des fichiers PBF pour chaque continent afin d'accélérer les traitements journaliers.
 
 ## Dépendances
@@ -81,5 +81,4 @@ Pour les utiliser :
 
 ## Visualiser les fichiers de logs
 Les fichiers de log contiennent les informations pour la coloration syntaxique des lignes.
-
 Pour visualiser leur contenu en couleur, vous pouvez utiliser la commande : `cat mon_fichier.log | more`
