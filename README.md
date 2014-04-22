@@ -41,41 +41,45 @@ Vérifiez que vous disposez bien des bonnes version de Gdal, Mysql et PHP.
 
 Si Gdal, n'a pas le support de Mysql et OSM, vous pouvez utiliser un des scripts présents dans le dossier "utils"
 pour le compiler.
-Pour ce faire, copier/coller le fichier "config.defaut.cfg" et renomer le "config.cfg".
-Ajuster les variables : MYSQL_CONFIG, GDAL_VERSION, GDAL_URL_DOWNLOAD, GDAL_BUILD_DIR, GDAL_INSTALL_DIR.
-Si nécessaire, adapter le script de compilation à votre convenance.
-Lancer le script de compilation correspondant à votre distribution : Mageia 3 (mga3), Opensuse 13.1 (os13-1) ou
-Debian 6 (deb6).
+Pour ce faire :
+ - copier/coller le fichier _config.defaut.cfg_ et renomer le _config.cfg_
+ - ajuster les variables : MYSQL_CONFIG, GDAL_VERSION, GDAL_URL_DOWNLOAD, GDAL_BUILD_DIR, GDAL_INSTALL_DIR
+ - si nécessaire, adapter le script de compilation à votre convenance
+ - lancer le script de compilation correspondant à votre distribution : Mageia 3 (_mga3_), Opensuse 13.1 (_os13-1_) ou
+Debian 6 (_deb6_)
 
 ## Première utilisation
 Pour la première utilisation, commencez par :
- - copier/coller le fichier "config.defaut.cfg" et renomer le "config.cfg" (si ce n'est pas déjà fait)
- - ajuster les variables du fichier "config.cfg" en fonction de vos besoins
+ - copier/coller le fichier _config.defaut.cfg_ et renomer le _config.cfg_ (si ce n'est pas déjà fait)
+ - ajuster les variables du fichier _config.cfg_ en fonction de vos besoins
  - lancer la commande suivante : `./update-boundary-admin.sh | tee $FILE_LOG`
+
 Un fichier de log contenant le contenu des sorties standard sera créé dans le dossier "logs" mais vous pourrez
 toujours visualiser les infos dans la console.
 
 ## Automatisation du lancement du script
 Vous pouvez automatiser le lancement de script via un cron, pour cela :
  - éditer le cron : `crontab -e`
- - Ajouter une entrée pour le lancement du script, par exemple :` 0 3 * * * /home/username/bin/update-boundary-admin.sh 2>/dev/null > $FILE_LOG`
+ - ajouter une entrée pour le lancement du script, par exemple :
+` 0 3 * * * /home/username/bin/update-boundary-admin.sh 2>/dev/null > $FILE_LOG`
 
-Vous pouvez aussi utiliser les scripts osm-service.sh et osm-cron.sh présents dans le dossier "utils".
+Vous pouvez aussi utiliser les scripts _osm-service.sh_ et _osm-cron.sh_ présents dans le dossier _utils/_.
 Ils permettent de lancer le script avec les droits d'un utilisateur donné même si celui ci n'a pas d'accès à un shell.
-Le script osm-service.sh est un service qui permet de lancer le script servant de cron "osm-cron.sh".
+Le script _osm-service.sh_ est un service qui permet de lancer le script servant de cron _osm-cron.sh_.
 Pour les utiliser :
- - copier le fichier "osm-cron.sh" dans "/usr/local/sbin"
+ - copier le fichier _osm-cron.sh_ dans _/usr/local/sbin_
  - modifier le contenu du fichier
   - indiquer le bon utilisateur
-  - indiquer le bon emplacement du script "update-boundary-admin.sh"
+  - indiquer le bon emplacement du script _update-boundary-admin.sh_
   - modifier l'heure du lancement du script si nécessaire
  - donner des droits d'execution au fichier : `chmod +x osm-cron.sh`
- - copier le fichier "osm-service.sh" dans "/etc/init.d"
+ - copier le fichier _osm-service.sh_ dans _/etc/init.d_
  - donner des droits d'execution au fichier : `chmod +x osm-service.sh`
  - vous pouvez lancer le service : `service osm-service.sh start`
  - pour l'arrêter utiliser: `service osm-service.sh stop`
  - pour connaître le statut du service : `service osm-service.sh status`
 
 ## Visualiser les fichiers de logs
-Les fichiers de log contienent les informations pour la coloration syntaxique des lignes.
+Les fichiers de log contiennent les informations pour la coloration syntaxique des lignes.
+
 Pour visualiser leur contenu en couleur, vous pouvez utiliser la commande : `cat mon_fichier.log | more`
