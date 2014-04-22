@@ -32,13 +32,13 @@ $queriesInit[] = "ALTER TABLE multipolygons ADD INDEX osm_version ( osm_version 
 
 // Initialize the database connection
 try {
-	$connection = 'mysql:host='.$config['MYSQL_HOST'].';dbname='.$config['MYSQL_DATABASE'];
+	$connection = 'mysql:host='.$config['MYSQL_HOST'].':'.$config['MYSQL_PORT'].';dbname='.$config['MYSQL_DATABASE'];
 	$pdoOptions= array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8');
 	$db = new PDO($connection, $config['MYSQL_USER'], $config['MYSQL_PASSWORD'], $pdoOptions);
 	$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 }
 catch(PDOException $e) {
-	$msg = 'ERREUR PDO in ' . $e->getFile() . ' L.' . $e->getLine() . ' : ' . $e->getMessage();
+	$msg = 'ERREUR PDO in ' . $e->getFile() . ' L.' . $e->getLine() . ' : ' . $e->getMessage()."\n";
 	die($msg);
 }
 // Update the database structure
