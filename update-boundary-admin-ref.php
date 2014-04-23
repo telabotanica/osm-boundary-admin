@@ -58,7 +58,7 @@ $query = "INSERT INTO multipolygons_ref ($fieldsToInsert, date_add, date_update,
 	'FROM multipolygons AS m '.
 	'WHERE m.osm_id IS NOT NULL '.
 	"AND m.osm_way_id IS NULL ".
-	"AND m.osm_id NOT IN (SELECT osm_id FROM multipolygons_ref WHERE zone = '$zone' ) ";
+	"AND m.osm_id NOT IN (SELECT osm_id FROM multipolygons_ref) ";
 
 $rowsAddedInfos = executeQuery($db, $query);
 $rowsAddedTpl = "Multipolygons added : %s - Time elapsed : %s\n";
