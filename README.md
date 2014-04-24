@@ -62,7 +62,7 @@ toujours visualiser les infos dans la console.
 Vous pouvez automatiser le lancement de script via un cron, pour cela :
  - éditer le cron : `crontab -e`
  - ajouter une entrée pour le lancement du script, par exemple :
-` 0 3 * * * /home/username/bin/update-boundary-admin.sh 2>/dev/null > $FILE_LOG`
+` 0 3 * * * /home/username/bin/update-boundary-admin.sh > /home/username/logs/`date +"%F"`.log 2>&1
 
 Vous pouvez aussi utiliser les scripts _osm-service.sh_ et _osm-cron.sh_ présents dans le dossier _utils/_.  
 Ils permettent de lancer le script avec les droits d'un utilisateur donné même si celui ci n'a pas d'accès à un shell.  
