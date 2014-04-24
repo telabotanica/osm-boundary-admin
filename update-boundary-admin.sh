@@ -2,6 +2,7 @@
 # Encoding : UTF-8
 
 TIME_START=$(date +%s)
+DIR_BASE=`pwd`
 
 # Functions
 function ageEnSeconde {
@@ -23,8 +24,8 @@ function displaytime {
 };
 
 # Load config
-if [ -f config.cfg ] ; then
-	source config.cfg
+if [ -f ${DIR_BASE}/config.cfg ] ; then
+	source ${DIR_BASE}/config.cfg
 	echo -e "${Gra}Config : ${Gre}OK${RCol}"
 else
 	echo -e "\e[1;31mPlease configure the script by renaming the file 'config.defaut.cfg' to 'config.cfg.\e[0m"
