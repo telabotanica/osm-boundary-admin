@@ -136,7 +136,7 @@ do
 
 	# Create and maintain the ref table
 	echo -e "${Yel}Updating the reference table for area «${AREA}»...${RCol}"
-	$BIN_PHP ./update-boundary-admin-ref.php ${AREA}
+	$BIN_PHP ${DIR_BASE}/update-boundary-admin-ref.php ${AREA}
 
 	# Show time elapsed
 	AREA_TIME_END=$(date +%s)
