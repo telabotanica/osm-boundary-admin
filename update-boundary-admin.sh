@@ -23,6 +23,13 @@ function displaytime {
 	printf '%d seconds\n' $S
 };
 
+download() {
+	local url=$1
+	local file=$2
+	wget --progress=dot $url -O $file 2>&1 | grep --line-buffered -E -o "100%|[1-9]0%|^[^%]+$" | uniq
+	echo -e "${Gra}Download $2 : ${Gre}DONE${RCol}"
+}
+
 # Load config
 if [ -f ${DIR_BASE}/config.cfg ] ; then
 	source ${DIR_BASE}/config.cfg
@@ -76,7 +83,7 @@ do
 		else
 			URL="http://download.geofabrik.de/${AREA}-latest.osm.pbf"
 		fi
-		wget $URL -O "${DIR_OSM}/${AREA}.osm.pbf"
+		download $URL "${DIR_OSM}/${AREA}.osm.pbf"
 	else
 		# Check if an update has been made less than 8 hours
 		if [ `ageEnSeconde "${DIR_OSM}/${AREA}.osm.pbf"` -gt 28800 ] ; then

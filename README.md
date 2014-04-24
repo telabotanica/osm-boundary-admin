@@ -52,7 +52,8 @@ Debian 6 (_deb6_)
 Pour la première utilisation, commencez par :
  - copier/coller le fichier _config.defaut.cfg_ et renomer le _config.cfg_ (si ce n'est pas déjà fait)
  - ajuster les variables du fichier _config.cfg_ en fonction de vos besoins
- - lancer la commande suivante : `./update-boundary-admin.sh | tee $FILE_LOG`
+ - dans une console, placer vous dans le dossier contenant le script
+ - lancer la commande suivante : `./update-boundary-admin.sh 2>&1 | tee $FILE_LOG`
 
 Un fichier de log contenant le contenu des sorties standard sera créé dans le dossier "logs" mais vous pourrez
 toujours visualiser les infos dans la console.
