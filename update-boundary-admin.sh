@@ -2,7 +2,7 @@
 # Encoding : UTF-8
 
 TIME_START=$(date +%s)
-DIR_BASE=`pwd`
+DIR_BASE=$(dirname $0)
 
 # Functions
 function ageEnSeconde {
