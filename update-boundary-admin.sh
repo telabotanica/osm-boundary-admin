@@ -85,12 +85,17 @@ do
 		fi
 		download $URL "${DIR_OSM}/${AREA}.osm.pbf"
 	else
-		# Check if an update has been made less than 8 hours
-		if [ `ageEnSeconde "${DIR_OSM}/${AREA}.osm.pbf"` -gt 28800 ] ; then
+		# Check if an update has been made less than 20 hours
+		if [ `ageEnSeconde "${DIR_OSM}/${AREA}.osm.pbf"` -gt 72000 ] ; then
 			echo -e "${Yel}Updating the PBF file for area «${AREA}»...${RCol}";
 			mv ${DIR_OSM}/${AREA}.osm.pbf ${DIR_OSM}/${AREA}_old.osm.pbf
 			${DIR_BIN}/osmupdate -B=${DIR_POLY}/${AREA}.poly -v -t=${DIR_TMP}/osmupdate/temp --day ${DIR_OSM}/${AREA}_old.osm.pbf ${DIR_OSM}/${AREA}.osm.pbf
-			rm -f ${DIR_OSM}/${AREA}_old.osm.pbf
+			if [ $? -eq 21 ] ; then
+				echo -e "${Yel}OSM file is already up-to-date. We rename the old file.${RCol}";
+				mv "${DIR_OSM}/${AREA}_old.osm.pbf" "${DIR_OSM}/${AREA}.osm.pbf"
+			else
+				rm -f "${DIR_OSM}/${AREA}_old.osm.pbf"
+			fi
 		else
 			echo -e "${Gre}${AREA}.osm.pbf is up to date${RCol}";
 		fi
@@ -101,7 +106,7 @@ do
 		echo -e "${Red}Can not find the file : ${AREA}.osm.pbf.${RCol}";
 		exit 1;
 	else
-		if [ ! -f "${DIR_OSM}/${AREA}_boundary.osm.pbf" ] || [ `ageEnSeconde "${DIR_OSM}/${AREA}_boundary.osm.pbf"` -gt 28800 ] ; then
+		if [ ! -f "${DIR_OSM}/${AREA}_boundary.osm.pbf" ] || [ `ageEnSeconde "${DIR_OSM}/${AREA}_boundary.osm.pbf"` -gt 72000 ] ; then
 			echo -e "${Yel}Filtering the administrative boundaries for area «${AREA}»...${RCol}"
 			${DIR_BIN}/osmconvert ${DIR_OSM}/${AREA}.osm.pbf --out-o5m > ${DIR_OSM}/${AREA}.o5m
 			${DIR_BIN}/osmfilter -t=${DIR_TMP}/osmfilter_tempfile \
