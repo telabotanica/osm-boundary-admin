@@ -1,7 +1,7 @@
 osm-boundary-admin
 ==================
 
-[Documentation en français](doc/README_FR.md "Freanch documentation")
+[Documentation en français](doc/README_FR.md)
 
 ## Goal
 The goal of this shell script is to extend the boundaries of administrative zones provided by OpenStreetMap project,
