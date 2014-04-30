@@ -1,85 +1,83 @@
 osm-boundary-admin
 ==================
 
-## But
-Le but de ce script shell est d'extraire les contours des zones administratives provenant du projet OpenStreetMap.
-Ceci afin de les intégrer dans une base Mysql 5.6 où une table de référence stocke les polygones correspondant
-et indique les dates d'ajout, de modification et de disparition.  
-Le script maintient donc à jour des fichiers PBF pour chaque continent afin d'accélérer les traitements journaliers.
+[Documentation en français](doc/README_FR.md)
 
-## Dépendances
- - Gdal ogr2ogr avec support de Mysql et OSM
+## Goal
+The goal of this shell script is to extend the boundaries of administrative zones provided by OpenStreetMap project,
+so that they are integrated in a MySQL 5.6 database where a reference table stores the correponding polygons, as well
+as their dates of addition, modification and removal.
+The script maintains a PBF file up-to-date for each continent, in order to speed up daily processings.
+
+## Dependencies
+ - Gdal ogr2ogr with Mysql and OSM support
  - Mysql 5.6
  - PHP 5.3
- - OSM C tools : osmupdate, osmfilter, osmconvert (téléchargés et compilés automatiquement par le script si nécessaire)
+ - OSM C tools : osmupdate, osmfilter, osmconvert (automatically downloaded and compiled by the script if necessary)
 
-## Organisation des dossiers
- - **bin/** : contient les binaires des scripts C d'OSM : osmupdate, osmfilter, osmconvert
- - **logs/** : contient les fichiers de logs du script (un par jour)
- - **osm/** : contient les fichier d'OSM téléchargés et mis à jour par le script.
- - **poly/** : contient les fichiers .poly permettant de filtrer par polygone les données d'OSM (source : http://download.geofabrik.de/ )
- - **tmp/** : contient les fichiers et dossiers temporaires créés par les scripts C d'OSM.
- - **utils/** : contient des scripts utilitaires : compilation de Gdal, service, cron.
- - *config.defaut.cfg* : paramètres de configuration du script. A renommer en "config.cfg".
- - *osmconf-boundary.ini* : paramètres de configuration pour ogr2ogr. Définit les tags à prendre en compte.
- - *update-boundary-admin-ref.php* : script PHP maintenant une table de référence des contours de zones administratives issues d'OpenSteetMap.
- - *update-boundary-admin.sh* : script Shell Bash principal assurant le téléchargement et la mise à jour de fichiers pbf
-par continent des données d'OSM et d'un sous ensemble contenant seulement les contours des zones administratives.
-Il s'assure aussi du lancement du script "update-boundary-admin-ref.php".
+## Directory structure
+ - **bin/** : contains OSM C scripts binaries : osmupdate, osmfilter, osmconvert
+ - **logs/** : contains logs (one file a day)
+ - **osm/** : contains downloaded OSM files plus script-updated versions
+ - **poly/** : contains .poly files, that allow per-polygon filtering of OSM data (source : http://download.geofabrik.de/ )
+ - **tmp/** : contains temporary files and folders created by OSM C scripts.
+ - **utils/** : contains utility scripts : Gdal compilation, service, cron.
+ - *config.defaut.cfg* : default configuration parameters for the script - to be renamed to "config.cfg".
+ - *osmconf-boundary.ini* : ogr2ogr configuration parameters. Defines the tags that will be considered.
+ - *update-boundary-admin-ref.php* : PHP script that maintains a reference table of administrative zones boundaries provided by OpenSteetMap.
+ - *update-boundary-admin.sh* : main Bash script managing the download and update of pbf continent files from OSM, and the download of
+a subset containing administrative zones boundaries only. Also manages the launch of script "update-boundary-admin-ref.php".
 
 ## Installation
-Assurez vous d'avoir au moins 50 Go d'espace disque, la duplication de certains fichiers peut consommer une
-quantité non négligeable d'espace disque de façon temporaire.  
-Pour être à l'aise et anticiper l'augmentation en taille des fichiers, prévoir 100Go d'espace disque.
+Ensure that you have at least 50 GB free disk space, as duplication of some files may temporarily need a large amount of disk space.  
+To feel at ease and foresee future file size growth, keep 100GB free space.
 
-Vous pouvez cloner le dépôt Git :  
+Clone Git repository here :
 `git clone https://github.com/telabotanica/osm-boundary-admin.git`
-Si vous ne disposez pas de Git, vous pouvez télécharger une archive zip :  
+If you don't have the Git program installed, doqnload a zip archive :
 https://github.com/telabotanica/osm-boundary-admin/archive/master.zip
 
-Vérifiez que vous disposez bien des bonnes version de Gdal, Mysql et PHP.
+Check that you have the right versions of Gdal, Mysql and PHP.
 
-Si Gdal, n'a pas le support de Mysql et OSM, vous pouvez utiliser un des scripts présents dans le dossier "utils"
-pour le compiler.  
-Pour ce faire :
- - copier/coller le fichier _config.defaut.cfg_ et renomer le _config.cfg_
- - ajuster les variables : MYSQL_CONFIG, GDAL_VERSION, GDAL_URL_DOWNLOAD, GDAL_BUILD_DIR, GDAL_INSTALL_DIR
- - si nécessaire, adapter le script de compilation à votre convenance
- - lancer le script de compilation correspondant à votre distribution : Mageia 3 (_mga3_), Opensuse 13.1 (_os13-1_) ou
+If Gdal has no Mysql or OSM support, you may want to use one of the scripts in "utils" folder to compile it.
+To do so :
+ - copy/paste the _config.defaut.cfg_ file and rename it to _config.cfg_
+ - adjust variables : MYSQL_CONFIG, GDAL_VERSION, GDAL_URL_DOWNLOAD, GDAL_BUILD_DIR, GDAL_INSTALL_DIR
+ - if necessary, adapt the compilation script appropriately
+ - launch the compilation script corresponding to your distribution : Mageia 3 (_mga3_), Opensuse 13.1 (_os13-1_) ou
 Debian 6 (_deb6_)
 
-## Première utilisation
-Pour la première utilisation, commencez par :
- - copier/coller le fichier _config.defaut.cfg_ et renomer le _config.cfg_ (si ce n'est pas déjà fait)
- - ajuster les variables du fichier _config.cfg_ en fonction de vos besoins
- - dans une console, placer vous dans le dossier contenant le script
- - lancer la commande suivante : `./update-boundary-admin.sh 2>&1 | tee $FILE_LOG`
+## First use
+Before firt use, start with :
+ - copy/paste-ing the _config.defaut.cfg_  file and rename it to _config.cfg_ (if not already done)
+ - adjust variables in the _config.cfg_ file to your needs
+ - with a command line, place into the folder containing the script
+ - launch the following command : `./update-boundary-admin.sh 2>&1 | tee $FILE_LOG`
 
-Un fichier de log contenant le contenu des sorties standard sera créé dans le dossier "logs" mais vous pourrez
-toujours visualiser les infos dans la console.
+A log file agregating the standard outputs will be created in the "logs" folder, while you will still see the info
+in the terminal.
 
-## Automatisation du lancement du script
-Vous pouvez automatiser le lancement de script via un cron, pour cela :
- - éditer le cron : `crontab -e`
- - ajouter une entrée pour le lancement du script, par exemple :
+## Launch the script automatially
+You might want to automate script launching using cron :
+ - edit the crontab : `crontab -e`
+ - add a new entry to launch the script, for example :
 ` 0 3 * * * /home/username/bin/update-boundary-admin.sh > /home/username/logs/`date +"%F"`.log 2>&1
 
-Vous pouvez aussi utiliser les scripts _osm-service.sh_ et _osm-cron.sh_ présents dans le dossier _utils/_.  
-Ils permettent de lancer le script avec les droits d'un utilisateur donné même si celui ci n'a pas d'accès à un shell.  
-Le script _osm-service.sh_ est un service qui permet de lancer le script servant de cron _osm-cron.sh_.  
-Pour les utiliser :
- - copier le fichier _osm-cron.sh_ dans _/usr/local/sbin_
- - modifier le contenu du fichier
-  - indiquer le bon utilisateur
-  - indiquer le bon emplacement du script _update-boundary-admin.sh_
-  - modifier l'heure du lancement du script si nécessaire
- - donner des droits d'execution au fichier : `chmod +x osm-cron.sh`
- - copier le fichier _osm-service.sh_ dans _/etc/init.d_
- - donner des droits d'execution au fichier : `chmod +x osm-service.sh`
- - vous pouvez lancer le service : `service osm-service.sh start`
- - pour l'arrêter utiliser: `service osm-service.sh stop`
- - pour connaître le statut du service : `service osm-service.sh status`
+You may also use _osm-service.sh_ and _osm-cron.sh_ scripts, located in _utils/_ folder.
+They allow to launch the script with the rights of some given user, even if he has no shell by default.
+_osm-service.sh_ script is a service allowing to launch the pseudo-cron script _osm-cron.sh_.  
+To use those two :
+ - copy _osm-cron.sh_ into _/usr/local/sbin_
+ - edit the file
+  - set the right username
+  - set the right location for _update-boundary-admin.sh_ cript
+  - adjust the time of day when to launch the script if needed
+ - give execution rights to the file : `chmod +x osm-cron.sh`
+ - copy _osm-service.sh_ into _/etc/init.d_
+ - give execution rights to it : `chmod +x osm-service.sh`
+ - now launch the service : `service osm-service.sh start`
+ - to stop it: `service osm-service.sh stop`
+ - to get service status : `service osm-service.sh status`
 
-## Visualiser les fichiers de logs
-Les fichiers de log contiennent les informations pour la coloration syntaxique des lignes.  
-Pour visualiser leur contenu en couleur, vous pouvez utiliser la commande : `cat mon_fichier.log | more`
+## Browse log files
+Log files contain information about syntax highlighting. To see the colorized content, you might want to use : `cat my_file.log | more`
