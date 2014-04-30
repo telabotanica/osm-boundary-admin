@@ -5,7 +5,7 @@ osm-boundary-admin
 
 ## Goal
 The goal of this shell script is to extend the boundaries of administrative zones provided by OpenStreetMap project,
-so that they are integrated in a MySQL 5.6 databse where a reference table stores the correponding polygons, as well
+so that they are integrated in a MySQL 5.6 database where a reference table stores the correponding polygons, as well
 as their dates of addition, modification and removal.
 The script maintains a PBF file up-to-date for each continent, in order to speed up daily processings.
 
@@ -39,7 +39,7 @@ https://github.com/telabotanica/osm-boundary-admin/archive/master.zip
 
 Check that you have the right versions of Gdal, Mysql and PHP.
 
-Si Gdal, has no Mysql or OSM support, you may want to use one of the scripts in "utils" folder to compile it.
+If Gdal has no Mysql or OSM support, you may want to use one of the scripts in "utils" folder to compile it.
 To do so :
  - copy/paste the _config.defaut.cfg_ file and rename it to _config.cfg_
  - adjust variables : MYSQL_CONFIG, GDAL_VERSION, GDAL_URL_DOWNLOAD, GDAL_BUILD_DIR, GDAL_INSTALL_DIR
@@ -64,7 +64,7 @@ You might want to automate script launching using cron :
 ` 0 3 * * * /home/username/bin/update-boundary-admin.sh > /home/username/logs/`date +"%F"`.log 2>&1
 
 You may also use _osm-service.sh_ and _osm-cron.sh_ scripts, located in _utils/_ folder.
-They allow to launch the script with tje rights of some given user, even if he has no shell by default.
+They allow to launch the script with the rights of some given user, even if he has no shell by default.
 _osm-service.sh_ script is a service allowing to launch the pseudo-cron script _osm-cron.sh_.  
 To use those two :
  - copy _osm-cron.sh_ into _/usr/local/sbin_
@@ -80,4 +80,4 @@ To use those two :
  - to get service status : `service osm-service.sh status`
 
 ## Browse log files
-Log files contain information about syntax highlighting. To see the colorized content, you might want to use : `cat mon_fichier.log | more`
+Log files contain information about syntax highlighting. To see the colorized content, you might want to use : `cat my_file.log | more`
