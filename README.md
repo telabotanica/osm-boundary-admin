@@ -4,7 +4,7 @@ osm-boundary-admin
 [Documentation en français](doc/README_FR.md)
 
 ## Goal
-The goal of this shell script is to extend the boundaries of administrative zones provided by OpenStreetMap project,
+The goal of this shell script is to extract the boundaries of administrative zones provided by OpenStreetMap project,
 so that they are integrated in a MySQL 5.6 database where a reference table stores the correponding polygons, as well
 as their dates of addition, modification and removal.
 The script maintains a PBF file up-to-date for each continent, in order to speed up daily processings.
